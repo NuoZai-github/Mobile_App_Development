@@ -4,11 +4,52 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Mobile_App_Develop"
-    Title="Mobile_App_Develop">
+    xmlns:views="clr-namespace:Mobile_App_Develop.Views"
+    Title="UTS Bus Tracker"
+    Shell.FlyoutBehavior="Disabled">
+
+    <!-- 认证页面路由 -->
+    <ShellContent
+        x:Name="LoginShell"
+        Title="Login"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="login" />
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        x:Name="RegisterShell"
+        Title="Register"
+        ContentTemplate="{DataTemplate views:RegisterPage}"
+        Route="register" />
+
+    <!-- 主应用导航 -->
+    <TabBar x:Name="MainTabBar" Route="main">
+        <!-- Dashboard 页面 -->
+        <ShellContent
+            Title="Dashboard"
+            Icon="home.png"
+            ContentTemplate="{DataTemplate views:DashboardPage}"
+            Route="dashboard" />
+
+        <!-- 地图页面 -->
+        <ShellContent
+            Title="Map"
+            Icon="map.png"
+            ContentTemplate="{DataTemplate views:MapPage}"
+            Route="map" />
+
+        <!-- 通知页面 -->
+        <ShellContent
+            Title="Notifications"
+            Icon="bell.png"
+            ContentTemplate="{DataTemplate views:NotificationsPage}"
+            Route="notifications" />
+
+        <!-- 个人资料页面 -->
+        <ShellContent
+            Title="Profile"
+            Icon="person.png"
+            ContentTemplate="{DataTemplate views:ProfilePage}"
+            Route="profile" />
+    </TabBar>
 
 </Shell>

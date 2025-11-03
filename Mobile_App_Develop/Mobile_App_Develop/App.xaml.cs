@@ -1,4 +1,6 @@
-﻿namespace Mobile_App_Develop
+using Mobile_App_Develop.Services;
+
+namespace Mobile_App_Develop
 {
     public partial class App : Application
     {
@@ -9,7 +11,8 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            var authService = Handler?.MauiContext?.Services.GetService<IAuthService>();
+            return new Window(new AppShell(authService!));
         }
     }
 }

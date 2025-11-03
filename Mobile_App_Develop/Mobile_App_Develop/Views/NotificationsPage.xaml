@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="Mobile_App_Develop.Views.NotificationsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Notifications"
+             BackgroundColor="#1a1a1a">
+
+    <Grid RowDefinitions="Auto,*">
+        
+        <!-- 顶部控制栏 -->
+        <Frame Grid.Row="0" 
+               BackgroundColor="#2d2d2d" 
+               CornerRadius="0" 
+               Padding="15"
+               HasShadow="True">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <StackLayout Grid.Column="0" VerticalOptions="Center">
+                    <Label Text="Notifications"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+                    <Label x:Name="UnreadCountLabel"
+                           Text="0 unread messages"
+                           FontSize="12"
+                           TextColor="#b0b0b0" />
+                </StackLayout>
+                
+                <Button Grid.Column="1"
+                        x:Name="MarkAllReadButton"
+                        Text="✓"
+                        FontSize="16"
+                        BackgroundColor="Transparent"
+                        TextColor="#4CAF50"
+                        ToolTipProperties.Text="Mark all as read"
+                        Clicked="OnMarkAllReadClicked" />
+                
+                <Button Grid.Column="2"
+                        x:Name="ClearAllButton"
+                        Text="🗑️"
+                        FontSize="16"
+                        BackgroundColor="Transparent"
+                        TextColor="#f44336"
+                        ToolTipProperties.Text="Clear all notifications"
+                        Clicked="OnClearAllClicked" />
+            </Grid>
+        </Frame>
+
+        <!-- 通知内容区域 -->
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="15" Spacing="10">
+                
+                <!-- 加载指示器 -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsVisible="False"
+                                   IsRunning="False"
+                                   Color="#2196F3"
+                                   HorizontalOptions="Center" />
+
+                <!-- 通知列表 -->
+                <CollectionView x:Name="NotificationsCollectionView"
+                                ItemsSource="{Binding Notifications}"
+                                BackgroundColor="Transparent">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="0,5">
+                                <Frame BackgroundColor="{Binding BackgroundColor}" 
+                                       CornerRadius="12" 
+                                       Padding="15"
+                                       HasShadow="True"
+                                       Margin="0,5">
+                                    <Grid ColumnDefinitions="Auto,*,Auto" 
+                                          RowDefinitions="Auto,Auto,Auto"
+                                          ColumnSpacing="15"
+                                          RowSpacing="5">
+                                        
+                                        <!-- 通知图标 -->
+                                        <Frame Grid.RowSpan="3"
+                                               BackgroundColor="{Binding IconColor}"
+                                               CornerRadius="25"
+                                               WidthRequest="50"
+                                               HeightRequest="50"
+                                               Padding="0"
+                                               HasShadow="False">
+                                            <Label Text="{Binding IconText}"
+                                                   FontSize="24"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center" />
+                                        </Frame>
+
+                                        <!-- 通知内容 -->
+                                        <Label Grid.Column="1" Grid.Row="0"
+                                               Text="{Binding Title}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="White" />
+                                        
+                                        <Label Grid.Column="1" Grid.Row="1"
+                                               Text="{Binding Message}"
+                                               FontSize="14"
+                                               TextColor="#b0b0b0"
+                                               MaxLines="2"
+                                               LineBreakMode="TailTruncation" />
+                                        
+                                        <Label Grid.Column="1" Grid.Row="2"
+                                               Text="{Binding TimeAgo}"
+                                               FontSize="12"
+                                               TextColor="#888" />
+
+                                        <!-- 状态和操作 -->
+                                        <StackLayout Grid.Column="2" Grid.RowSpan="3"
+                                                     VerticalOptions="Center"
+                                                     Spacing="5">
+                                            <Frame BackgroundColor="{Binding StatusColor}"
+                                                   CornerRadius="10"
+                                                   Padding="8,4"
+                                                   HasShadow="False"
+                                                   IsVisible="{Binding ShowUnreadIndicator}">
+                                                <Label Text="NEW"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       HorizontalOptions="Center" />
+                                            </Frame>
+                                            
+                                            <Button Text="×"
+                                                    FontSize="18"
+                                                    BackgroundColor="Transparent"
+                                                    TextColor="#666"
+                                                    WidthRequest="30"
+                                                    HeightRequest="30"
+                                                    CornerRadius="15"
+                                                    Clicked="OnDeleteNotificationClicked"
+                                                    CommandParameter="{Binding}" />
+                                        </StackLayout>
+                                    </Grid>
+
+                                    <!-- 点击手势 -->
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnNotificationTapped"
+                                                              CommandParameter="{Binding}" />
+                                    </Frame.GestureRecognizers>
+                                </Frame>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- 空状态 -->
+                <StackLayout x:Name="EmptyStateLayout"
+                             IsVisible="False"
+                             VerticalOptions="Center"
+                             Padding="20"
+                             Spacing="15">
+                    <Label Text="🔔"
+                           FontSize="64"
+                           HorizontalOptions="Center"
+                           TextColor="#666" />
+                    <Label Text="No notifications yet"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#666"
+                           HorizontalOptions="Center" />
+                    <Label Text="You'll receive notifications about bus updates, delays, and other important information here."
+                           FontSize="14"
+                           TextColor="#999"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                    
+                    <!-- 测试通知按钮 -->
+                    <Button x:Name="TestNotificationButton"
+                            Text="Send Test Notification"
+                            BackgroundColor="#2196F3"
+                            TextColor="White"
+                            CornerRadius="25"
+                            Padding="20,10"
+                            Margin="0,20,0,0"
+                            Clicked="OnSendTestNotificationClicked" />
+                </StackLayout>
+
+                <!-- 通知设置 -->
+                <Frame BackgroundColor="#2d2d2d" 
+                       CornerRadius="12" 
+                       Padding="15"
+                       HasShadow="True"
+                       Margin="0,20,0,0">
+                    <StackLayout Spacing="15">
+                        <Label Text="Notification Settings"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="White" />
+                        
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="Bus arrival alerts"
+                                   FontSize="14"
+                                   TextColor="#b0b0b0"
+                                   VerticalOptions="Center" />
+                            <Switch Grid.Row="0" Grid.Column="1"
+                                    x:Name="ArrivalAlertsSwitch"
+                                    IsToggled="True"
+                                    OnColor="#4CAF50" />
+                            
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="Service disruption alerts"
+                                   FontSize="14"
+                                   TextColor="#b0b0b0"
+                                   VerticalOptions="Center" />
+                            <Switch Grid.Row="1" Grid.Column="1"
+                                    x:Name="DisruptionAlertsSwitch"
+                                    IsToggled="True"
+                                    OnColor="#4CAF50" />
+                            
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="Route updates"
+                                   FontSize="14"
+                                   TextColor="#b0b0b0"
+                                   VerticalOptions="Center" />
+                            <Switch Grid.Row="2" Grid.Column="1"
+                                    x:Name="RouteUpdatesSwitch"
+                                    IsToggled="False"
+                                    OnColor="#4CAF50" />
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+            </StackLayout>
+        </ScrollView>
+
+    </Grid>
+
+</ContentPage>

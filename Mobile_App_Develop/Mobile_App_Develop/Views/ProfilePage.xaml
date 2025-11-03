@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="Mobile_App_Develop.Views.ProfilePage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Profile"
+             BackgroundColor="#1a1a1a">
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="20">
+            
+            <!-- Loading Indicator -->
+            <ActivityIndicator x:Name="LoadingIndicator" 
+                             IsVisible="False" 
+                             IsRunning="False"
+                             Color="#007acc" />
+
+            <!-- User Profile Header -->
+            <Frame BackgroundColor="#2d2d2d" 
+                   CornerRadius="15" 
+                   Padding="20"
+                   HasShadow="True">
+                <StackLayout Spacing="15">
+                    
+                    <!-- Profile Picture -->
+                    <Frame BackgroundColor="#007acc" 
+                           CornerRadius="50" 
+                           WidthRequest="100" 
+                           HeightRequest="100"
+                           HorizontalOptions="Center"
+                           Padding="0">
+                        <Label x:Name="ProfileInitialsLabel"
+                               Text="JD"
+                               FontSize="36"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Frame>
+
+                    <!-- User Info -->
+                    <StackLayout Spacing="5">
+                        <Label x:Name="UserNameLabel"
+                               Text="John Doe"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center" />
+                        
+                        <Label x:Name="UserEmailLabel"
+                               Text="john.doe@student.uts.edu.au"
+                               FontSize="14"
+                               TextColor="#cccccc"
+                               HorizontalOptions="Center" />
+                        
+                        <Label x:Name="StudentIdLabel"
+                               Text="Student ID: 12345678"
+                               FontSize="14"
+                               TextColor="#cccccc"
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+
+                    <!-- Edit Profile Button -->
+                    <Button x:Name="EditProfileButton"
+                            Text="Edit Profile"
+                            BackgroundColor="#007acc"
+                            TextColor="White"
+                            CornerRadius="25"
+                            HeightRequest="50"
+                            Clicked="OnEditProfileClicked" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Quick Stats -->
+            <Frame BackgroundColor="#2d2d2d" 
+                   CornerRadius="15" 
+                   Padding="20"
+                   HasShadow="True">
+                <StackLayout>
+                    <Label Text="Quick Stats"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           Margin="0,0,0,15" />
+                    
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" RowSpacing="10">
+                        
+                        <!-- Trips This Week -->
+                        <StackLayout Grid.Column="0" Spacing="5">
+                            <Label x:Name="TripsThisWeekLabel"
+                                   Text="12"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#007acc"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Trips This Week"
+                                   FontSize="12"
+                                   TextColor="#cccccc"
+                                   HorizontalOptions="Center" />
+                        </StackLayout>
+
+                        <!-- Favorite Routes -->
+                        <StackLayout Grid.Column="1" Spacing="5">
+                            <Label x:Name="FavoriteRoutesLabel"
+                                   Text="3"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#28a745"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Favorite Routes"
+                                   FontSize="12"
+                                   TextColor="#cccccc"
+                                   HorizontalOptions="Center" />
+                        </StackLayout>
+
+                        <!-- Total Distance -->
+                        <StackLayout Grid.Column="2" Spacing="5">
+                            <Label x:Name="TotalDistanceLabel"
+                                   Text="45km"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#ffc107"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Total Distance"
+                                   FontSize="12"
+                                   TextColor="#cccccc"
+                                   HorizontalOptions="Center" />
+                        </StackLayout>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Settings Section -->
+            <Frame BackgroundColor="#2d2d2d" 
+                   CornerRadius="15" 
+                   Padding="20"
+                   HasShadow="True">
+                <StackLayout Spacing="15">
+                    <Label Text="Settings"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+
+                    <!-- Notification Settings -->
+                    <StackLayout Orientation="Horizontal" Spacing="15">
+                        <Label Text="🔔"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                        <Label Text="Push Notifications"
+                               FontSize="16"
+                               TextColor="White"
+                               VerticalOptions="Center"
+                               HorizontalOptions="StartAndExpand" />
+                        <Switch x:Name="NotificationSwitch"
+                                IsToggled="True"
+                                OnColor="#007acc"
+                                ThumbColor="White" />
+                    </StackLayout>
+
+                    <!-- Location Services -->
+                    <StackLayout Orientation="Horizontal" Spacing="15">
+                        <Label Text="📍"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                        <Label Text="Location Services"
+                               FontSize="16"
+                               TextColor="White"
+                               VerticalOptions="Center"
+                               HorizontalOptions="StartAndExpand" />
+                        <Switch x:Name="LocationSwitch"
+                                IsToggled="True"
+                                OnColor="#007acc"
+                                ThumbColor="White" />
+                    </StackLayout>
+
+                    <!-- Dark Mode -->
+                    <StackLayout Orientation="Horizontal" Spacing="15">
+                        <Label Text="🌙"
+                               FontSize="20"
+                               VerticalOptions="Center" />
+                        <Label Text="Dark Mode"
+                               FontSize="16"
+                               TextColor="White"
+                               VerticalOptions="Center"
+                               HorizontalOptions="StartAndExpand" />
+                        <Switch x:Name="DarkModeSwitch"
+                                IsToggled="True"
+                                OnColor="#007acc"
+                                ThumbColor="White" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Menu Options -->
+            <Frame BackgroundColor="#2d2d2d" 
+                   CornerRadius="15" 
+                   Padding="0"
+                   HasShadow="True">
+                <StackLayout Spacing="0">
+                    
+                    <!-- Favorite Routes -->
+                    <Frame BackgroundColor="Transparent" 
+                           Padding="20,15"
+                           CornerRadius="0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnFavoriteRoutesClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <Label Text="⭐"
+                                   FontSize="20"
+                                   VerticalOptions="Center" />
+                            <Label Text="Favorite Routes"
+                                   FontSize="16"
+                                   TextColor="White"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Label Text=">"
+                                   FontSize="16"
+                                   TextColor="#cccccc"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- Trip History -->
+                    <BoxView BackgroundColor="#404040" HeightRequest="1" />
+                    <Frame BackgroundColor="Transparent" 
+                           Padding="20,15"
+                           CornerRadius="0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnTripHistoryClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <Label Text="📊"
+                                   FontSize="20"
+                                   VerticalOptions="Center" />
+                            <Label Text="Trip History"
+                                   FontSize="16"
+                                   TextColor="White"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Label Text=">"
+                                   FontSize="16"
+                                   TextColor="#cccccc"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- Help & Support -->
+                    <BoxView BackgroundColor="#404040" HeightRequest="1" />
+                    <Frame BackgroundColor="Transparent" 
+                           Padding="20,15"
+                           CornerRadius="0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnHelpSupportClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <Label Text="❓"
+                                   FontSize="20"
+                                   VerticalOptions="Center" />
+                            <Label Text="Help &amp; Support"
+                                   FontSize="16"
+                                   TextColor="White"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Label Text=">"
+                                   FontSize="16"
+                                   TextColor="#cccccc"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- About -->
+                    <BoxView BackgroundColor="#404040" HeightRequest="1" />
+                    <Frame BackgroundColor="Transparent" 
+                           Padding="20,15"
+                           CornerRadius="0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAboutClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <Label Text="ℹ️"
+                                   FontSize="20"
+                                   VerticalOptions="Center" />
+                            <Label Text="About"
+                                   FontSize="16"
+                                   TextColor="White"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Label Text=">"
+                                   FontSize="16"
+                                   TextColor="#cccccc"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+            <!-- Account Actions -->
+            <Frame BackgroundColor="#2d2d2d" 
+                   CornerRadius="15" 
+                   Padding="0"
+                   HasShadow="True">
+                <StackLayout Spacing="0">
+                    
+                    <!-- Change Password -->
+                    <Frame BackgroundColor="Transparent" 
+                           Padding="20,15"
+                           CornerRadius="0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnChangePasswordClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <Label Text="🔐"
+                                   FontSize="20"
+                                   VerticalOptions="Center" />
+                            <Label Text="Change Password"
+                                   FontSize="16"
+                                   TextColor="White"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Label Text=">"
+                                   FontSize="16"
+                                   TextColor="#cccccc"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- Logout -->
+                    <BoxView BackgroundColor="#404040" HeightRequest="1" />
+                    <Frame BackgroundColor="Transparent" 
+                           Padding="20,15"
+                           CornerRadius="0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLogoutClicked" />
+                        </Frame.GestureRecognizers>
+                        <StackLayout Orientation="Horizontal" Spacing="15">
+                            <Label Text="🚪"
+                                   FontSize="20"
+                                   VerticalOptions="Center" />
+                            <Label Text="Logout"
+                                   FontSize="16"
+                                   TextColor="#dc3545"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="StartAndExpand" />
+                            <Label Text=">"
+                                   FontSize="16"
+                                   TextColor="#cccccc"
+                                   VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+            <!-- Version Info -->
+            <Label Text="Version 1.0.0"
+                   FontSize="12"
+                   TextColor="#666666"
+                   HorizontalOptions="Center"
+                   Margin="0,20,0,0" />
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

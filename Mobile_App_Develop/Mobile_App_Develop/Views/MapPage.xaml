@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="Mobile_App_Develop.Views.MapPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Bus Map"
+             BackgroundColor="#1a1a1a">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        
+        <!-- 顶部控制栏 -->
+        <Frame Grid.Row="0" 
+               BackgroundColor="#2d2d2d" 
+               CornerRadius="0" 
+               Padding="15"
+               HasShadow="True">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <Label Grid.Column="0"
+                       Text="Real-time Bus Tracking"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       VerticalOptions="Center" />
+                
+                <Button Grid.Column="1"
+                        x:Name="RefreshButton"
+                        Text="🔄"
+                        FontSize="16"
+                        BackgroundColor="Transparent"
+                        TextColor="#2196F3"
+                        Clicked="OnRefreshClicked" />
+                
+                <Button Grid.Column="2"
+                        x:Name="CenterButton"
+                        Text="📍"
+                        FontSize="16"
+                        BackgroundColor="Transparent"
+                        TextColor="#4CAF50"
+                        Clicked="OnCenterMapClicked" />
+            </Grid>
+        </Frame>
+
+        <!-- 地图区域 (静态模拟) -->
+        <Grid Grid.Row="1" BackgroundColor="#333">
+            
+            <!-- 静态地图背景 -->
+            <Frame BackgroundColor="#2d2d2d" 
+                   CornerRadius="0" 
+                   Padding="0"
+                   HasShadow="False">
+                
+                <!-- 地图网格 -->
+                <Grid x:Name="MapGrid" 
+                      BackgroundColor="#2d2d2d">
+                    
+                    <!-- 地图背景图案 -->
+                    <AbsoluteLayout x:Name="MapCanvas" BackgroundColor="#2d2d2d">
+                        
+                        <!-- 模拟街道线条 -->
+                        <BoxView Color="#555" 
+                                 WidthRequest="300" 
+                                 HeightRequest="2"
+                                 AbsoluteLayout.LayoutBounds="50,100,300,2"
+                                 AbsoluteLayout.LayoutFlags="None" />
+                        <BoxView Color="#555" 
+                                 WidthRequest="300" 
+                                 HeightRequest="2"
+                                 AbsoluteLayout.LayoutBounds="50,200,300,2"
+                                 AbsoluteLayout.LayoutFlags="None" />
+                        <BoxView Color="#555" 
+                                 WidthRequest="300" 
+                                 HeightRequest="2"
+                                 AbsoluteLayout.LayoutBounds="50,300,300,2"
+                                 AbsoluteLayout.LayoutFlags="None" />
+                        <BoxView Color="#555" 
+                                 WidthRequest="2" 
+                                 HeightRequest="250"
+                                 AbsoluteLayout.LayoutBounds="100,75,2,250"
+                                 AbsoluteLayout.LayoutFlags="None" />
+                        <BoxView Color="#555" 
+                                 WidthRequest="2" 
+                                 HeightRequest="250"
+                                 AbsoluteLayout.LayoutBounds="200,75,2,250"
+                                 AbsoluteLayout.LayoutFlags="None" />
+                        <BoxView Color="#555" 
+                                 WidthRequest="2" 
+                                 HeightRequest="250"
+                                 AbsoluteLayout.LayoutBounds="300,75,2,250"
+                                 AbsoluteLayout.LayoutFlags="None" />
+
+                        <!-- 巴士站点 -->
+                        <Frame AbsoluteLayout.LayoutBounds="90,90,20,20"
+                               AbsoluteLayout.LayoutFlags="None"
+                               BackgroundColor="#FFC107" 
+                               CornerRadius="15" 
+                               WidthRequest="20" 
+                               HeightRequest="20" 
+                               Padding="0"
+                               HasShadow="True">
+                            <Label Text="🚏" 
+                                   FontSize="10" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center" />
+                        </Frame>
+                        
+                        <Frame AbsoluteLayout.LayoutBounds="190,190,20,20"
+                               AbsoluteLayout.LayoutFlags="None"
+                               BackgroundColor="#FFC107" 
+                               CornerRadius="15" 
+                               WidthRequest="20" 
+                               HeightRequest="20" 
+                               Padding="0"
+                               HasShadow="True">
+                            <Label Text="🚏" 
+                                   FontSize="10" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center" />
+                        </Frame>
+                        
+                        <Frame AbsoluteLayout.LayoutBounds="290,290,20,20"
+                               AbsoluteLayout.LayoutFlags="None"
+                               BackgroundColor="#FFC107" 
+                               CornerRadius="15" 
+                               WidthRequest="20" 
+                               HeightRequest="20" 
+                               Padding="0"
+                               HasShadow="True">
+                            <Label Text="🚏" 
+                                   FontSize="10" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center" />
+                        </Frame>
+
+                        <!-- 动态巴士标记容器 -->
+                        <StackLayout x:Name="BusMarkersContainer" />
+                        
+                    </AbsoluteLayout>
+                </Grid>
+            </Frame>
+
+            <!-- 加载指示器 -->
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsVisible="False"
+                               IsRunning="False"
+                               Color="#2196F3"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+
+            <!-- 地图说明 -->
+            <Frame BackgroundColor="#2d2d2d" 
+                   CornerRadius="12" 
+                   Padding="10"
+                   HasShadow="True"
+                   HorizontalOptions="Start"
+                   VerticalOptions="Start"
+                   Margin="15">
+                <StackLayout Spacing="5">
+                    <Label Text="Map Legend" 
+                           FontSize="12" 
+                           FontAttributes="Bold" 
+                           TextColor="White" />
+                    <StackLayout Orientation="Horizontal" Spacing="5">
+                        <Label Text="🚌" FontSize="12" />
+                        <Label Text="Active Bus" FontSize="10" TextColor="#b0b0b0" />
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" Spacing="5">
+                        <Label Text="🚏" FontSize="12" />
+                        <Label Text="Bus Stop" FontSize="10" TextColor="#b0b0b0" />
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" Spacing="5">
+                        <Label Text="—" FontSize="12" TextColor="#555" />
+                        <Label Text="Route" FontSize="10" TextColor="#b0b0b0" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+        </Grid>
+
+        <!-- 底部信息栏 -->
+        <Frame Grid.Row="2" 
+               BackgroundColor="#2d2d2d" 
+               CornerRadius="0" 
+               Padding="15"
+               HasShadow="True">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackLayout Grid.Column="0">
+                    <Label x:Name="SelectedBusLabel"
+                           Text="Select a bus to view details"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+                    <Label x:Name="BusDetailsLabel"
+                           Text="Tap on a bus marker for more information"
+                           FontSize="12"
+                           TextColor="#b0b0b0" />
+                </StackLayout>
+                
+                <Button Grid.Column="1"
+                        x:Name="ViewListButton"
+                        Text="📋"
+                        FontSize="16"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
+                        CornerRadius="20"
+                        WidthRequest="40"
+                        HeightRequest="40"
+                        Clicked="OnViewListClicked" />
+            </Grid>
+        </Frame>
+
+    </Grid>
+
+</ContentPage>
