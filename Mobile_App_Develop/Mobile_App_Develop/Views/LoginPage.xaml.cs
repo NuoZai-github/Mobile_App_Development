@@ -36,7 +36,7 @@ public partial class LoginPage : ContentPage
             if (success)
             {
                 // 导航到主应用页面
-                await Shell.Current.GoToAsync("//main");
+                await (Shell.Current?.GoToAsync("//main") ?? Task.CompletedTask);
             }
             else
             {
@@ -143,7 +143,7 @@ public partial class LoginPage : ContentPage
         // 检查是否已经登录
         if (await _authService.IsLoggedInAsync())
         {
-            await Shell.Current.GoToAsync("//main");
+            await (Shell.Current?.GoToAsync("//main") ?? Task.CompletedTask);
         }
         
         // 清空输入框

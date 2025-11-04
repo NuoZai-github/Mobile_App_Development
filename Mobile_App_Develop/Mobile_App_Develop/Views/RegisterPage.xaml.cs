@@ -164,7 +164,7 @@ public partial class RegisterPage : ContentPage
 
     private async void OnLoginTapped(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        await (Shell.Current?.GoToAsync("..") ?? Task.CompletedTask);
     }
 
     private async void OnTermsTapped(object sender, EventArgs e)

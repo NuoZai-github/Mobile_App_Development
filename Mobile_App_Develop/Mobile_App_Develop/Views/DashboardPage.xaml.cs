@@ -159,7 +159,7 @@ public partial class DashboardPage : ContentPage
             switch (action)
             {
                 case "View on Map":
-                    await Shell.Current.GoToAsync($"//main/map?busId={bus.Id}");
+                    await (Shell.Current?.GoToAsync($"//main/map?busId={bus.Id}") ?? Task.CompletedTask);
                     break;
                 case "Get Notifications":
                     await SetupBusNotifications(bus);

@@ -11,8 +11,9 @@ namespace Mobile_App_Develop
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            var authService = Handler?.MauiContext?.Services.GetService<IAuthService>();
-            return new Window(new AppShell(authService!));
+            // 直接注入 IAuthService 构造 Shell，缩短解析链便于定位问题
+            var auth = ServiceHelper.GetService<IAuthService>();
+            return new Window(new AppShell(auth));
         }
     }
 }

@@ -1,0 +1,6 @@
+{
+  "supabase": {
+    "url": "REPLACE_WITH_SUPABASE_URL",
+    "anonKey": "REPLACE_WITH_SUPABASE_ANON_KEY"
+  }
+}

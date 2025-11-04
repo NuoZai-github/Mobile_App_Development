@@ -133,7 +133,7 @@ public partial class NotificationsPage : ContentPage
         switch (action)
         {
             case "View on Map":
-                await Shell.Current.GoToAsync($"//main/map?busId={notification.BusId}");
+                await (Shell.Current?.GoToAsync($"//main/map?busId={notification.BusId}") ?? Task.CompletedTask);
                 break;
             case "Take Action":
                 await HandleNotificationAction(notification);

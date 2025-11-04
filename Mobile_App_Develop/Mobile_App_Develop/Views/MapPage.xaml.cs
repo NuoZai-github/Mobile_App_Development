@@ -277,7 +277,7 @@ public partial class MapPage : ContentPage
     private async void OnViewListClicked(object sender, EventArgs e)
     {
         // 导航到Dashboard页面
-        await Shell.Current.GoToAsync("//main/dashboard");
+        await (Shell.Current?.GoToAsync("//main/dashboard") ?? Task.CompletedTask);
     }
 
     private async void OnBusLocationUpdated(object sender, BusLocationEventArgs e)

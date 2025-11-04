@@ -10,7 +10,8 @@ namespace Mobile_App_Develop
         public AppShell(IAuthService authService)
         {
             InitializeComponent();
-            _authService = authService;
+            // 防御：若注入为 null，则从全局服务解析，避免空引用
+            _authService = authService ?? ServiceHelper.GetService<IAuthService>();
             
             // 直接为登录/注册 ShellContent 设定页面实例，避免 DataTemplate 构造期服务解析问题
             LoginShell.ContentTemplate = null;
@@ -53,7 +54,7 @@ namespace Mobile_App_Develop
                 // 先导航到主应用，再隐藏登录/注册，避免隐藏当前活动项导致内容丢失
                 MainTabBar.IsVisible = true;
                 CurrentItem = MainTabBar;
-                await Current.GoToAsync("//main/dashboard");
+                await (Shell.Current?.GoToAsync("//main/dashboard") ?? Task.CompletedTask);
 
                 LoginShell.IsVisible = false;
                 RegisterShell.IsVisible = false;
@@ -66,7 +67,7 @@ namespace Mobile_App_Develop
                 RegisterShell.IsVisible = true;
 
                 CurrentItem = LoginShell;
-                await Current.GoToAsync("//login");
+                await (Shell.Current?.GoToAsync("//login") ?? Task.CompletedTask);
             }
         }
 

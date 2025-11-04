@@ -43,7 +43,15 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
 		<!-- Prevent Java/managed linking from stripping MAUI classes in Debug -->
 		<AndroidLinkMode>None</AndroidLinkMode>
+		<AndroidEnableMinify>false</AndroidEnableMinify>
+		<AndroidLinkTool>none</AndroidLinkTool>
+	</PropertyGroup>
+
+	<!-- Harden Release packaging: keep MAUI classes when minification is enabled -->
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
 		<AndroidLinkTool>r8</AndroidLinkTool>
+		<AndroidEnableMinify>true</AndroidEnableMinify>
+		<AndroidProguardConfig>proguard-maUI-keep.cfg</AndroidProguardConfig>
 	</PropertyGroup>
 
 	<ItemGroup>

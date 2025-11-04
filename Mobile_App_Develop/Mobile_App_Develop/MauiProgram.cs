@@ -4,6 +4,7 @@ using Mobile_App_Develop.Services;
 using Mobile_App_Develop.Views;
 using CommunityToolkit.Maui;
 using Plugin.LocalNotification;
+using Supabase;
 
 namespace Mobile_App_Develop
 {
@@ -24,6 +25,19 @@ namespace Mobile_App_Develop
                 });
 
             // 注册服务
+            // 注册 Supabase 客户端（从环境变量读取 URL 和 Anon Key）
+            builder.Services.AddSingleton<Client>(sp =>
+            {
+                var url = SupabaseConstants.GetUrl();
+                var key = SupabaseConstants.GetAnonKey();
+                var options = new SupabaseOptions
+                {
+                    AutoRefreshToken = true,
+                    AutoConnectRealtime = false
+                };
+                return new Client(url, key, options);
+            });
+
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<IBusService, BusService>();
             builder.Services.AddSingleton<Mobile_App_Develop.Services.INotificationService, NotificationService>();
@@ -41,7 +55,10 @@ namespace Mobile_App_Develop
     		builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+            // 构建应用并初始化服务定位器，确保页面的无参构造可用 DI
+            var app = builder.Build();
+            ServiceHelper.Initialize(app.Services);
+            return app;
         }
     }
 }
