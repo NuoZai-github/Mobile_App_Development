@@ -1,188 +1,206 @@
-using Mobile_App_Develop.Models;
+using UserModel = Mobile_App_Develop.Models.User;
+using Supabase;
 
 namespace Mobile_App_Develop.Services
 {
     public class AuthService : IAuthService
     {
-        private User? _currentUser;
-        private readonly List<User> _users;
+        private UserModel? _currentUser;
+        private readonly Client _client;
+        private Task? _initTask;
         
         public event EventHandler<UserChangedEventArgs>? UserChanged;
 
-        public AuthService()
+        public AuthService(Client client)
         {
-            // 初始化一些测试用户
-            _users = new List<User>
-            {
-                new User
-                {
-                    Id = 1,
-                    Email = "student@uts.edu.my",
-                    Password = "password123",
-                    FirstName = "John",
-                    LastName = "Doe",
-                    StudentId = "12345678",
-                    AvatarUrl = "https://via.placeholder.com/150",
-                    CreatedAt = DateTime.Now.AddDays(-30)
-                },
-                new User
-                {
-                    Id = 2,
-                    Email = "jane.smith@uts.edu.my",
-                    Password = "password456",
-                    FirstName = "Jane",
-                    LastName = "Smith",
-                    StudentId = "87654321",
-                    AvatarUrl = "https://via.placeholder.com/150",
-                    CreatedAt = DateTime.Now.AddDays(-15)
-                }
-            };
+            _client = client;
+        }
+
+        private async Task EnsureInitialized()
+        {
+            _initTask ??= _client.InitializeAsync();
+            await _initTask;
         }
 
         public async Task<bool> LoginAsync(string email, string password)
         {
-            await Task.Delay(1000); // 模拟网络延迟
-            
-            var user = _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase) && u.Password == password);
-            
-            if (user != null && user.IsActive)
+            await EnsureInitialized();
+
+            try
             {
-                _currentUser = user;
-                _currentUser.LastLoginAt = DateTime.Now;
-                UserChanged?.Invoke(this, new UserChangedEventArgs(_currentUser));
-                
-                // 保存登录状态到本地存储
-                await SecureStorage.SetAsync("user_id", user.Id.ToString());
-                await SecureStorage.SetAsync("user_email", user.Email);
-                
-                return true;
+                var session = await _client.Auth.SignIn(email, password);
+                if (session != null && session.User != null)
+                {
+                    var u = session.User;
+                    _currentUser = new UserModel
+                    {
+                        // Supabase 的 User.Id 为字符串 UUID；此处不映射到 int。
+                        Id = 0,
+                        Email = u.Email ?? email,
+                        FirstName = string.Empty,
+                        LastName = string.Empty,
+                        StudentId = string.Empty,
+                        AvatarUrl = string.Empty,
+                        LastLoginAt = DateTime.Now,
+                        IsActive = true
+                    };
+
+                    UserChanged?.Invoke(this, new UserChangedEventArgs(_currentUser));
+                    return true;
+                }
             }
-            
+            catch
+            {
+                // 忽略并返回失败，交由 UI 提示
+            }
+
             return false;
         }
 
-        public async Task<bool> RegisterAsync(User user)
+        public async Task<bool> RegisterAsync(Mobile_App_Develop.Models.User user)
         {
-            await Task.Delay(1500); // 模拟网络延迟
-            
-            // 检查邮箱是否已存在
-            if (_users.Any(u => u.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase)))
+            await EnsureInitialized();
+
+            try
             {
-                return false;
+                var session = await _client.Auth.SignUp(user.Email, user.Password);
+
+                // 如果项目开启了邮箱确认，SignUp 后可能没有会话，此处尝试直接登录。
+                if (session == null || session.User == null)
+                {
+                    try
+                    {
+                        session = await _client.Auth.SignIn(user.Email, user.Password);
+                    }
+                    catch { /* 尝试登录失败则继续按未登录处理 */ }
+                }
+
+                if (session != null && session.User != null)
+                {
+                    var u = session.User;
+                    _currentUser = new UserModel
+                    {
+                        Id = 0,
+                        Email = u.Email ?? user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        StudentId = user.StudentId,
+                        AvatarUrl = user.AvatarUrl,
+                        CreatedAt = DateTime.Now,
+                        IsActive = true
+                    };
+
+                    UserChanged?.Invoke(this, new UserChangedEventArgs(_currentUser));
+                    return true;
+                }
             }
-            
-            // 生成新的用户ID
-            user.Id = _users.Count > 0 ? _users.Max(u => u.Id) + 1 : 1;
-            user.CreatedAt = DateTime.Now;
-            user.IsActive = true;
-            
-            _users.Add(user);
-            
-            // 自动登录新注册的用户
-            _currentUser = user;
-            UserChanged?.Invoke(this, new UserChangedEventArgs(_currentUser));
-            
-            await SecureStorage.SetAsync("user_id", user.Id.ToString());
-            await SecureStorage.SetAsync("user_email", user.Email);
-            
-            return true;
+            catch (Exception)
+            {
+                // 注册失败（如邮箱已存在或策略限制）
+            }
+
+            return false;
         }
 
         public async Task<bool> LogoutAsync()
         {
-            await Task.Delay(500); // 模拟网络延迟
-            
+            await EnsureInitialized();
+            try
+            {
+                await _client.Auth.SignOut();
+            }
+            catch { /* 忽略 */ }
+
             _currentUser = null;
             UserChanged?.Invoke(this, new UserChangedEventArgs(null));
-            
-            // 清除本地存储的登录信息
-            SecureStorage.Remove("user_id");
-            SecureStorage.Remove("user_email");
-            
             return true;
         }
 
-        public async Task<User?> GetCurrentUserAsync()
+        public async Task<Mobile_App_Develop.Models.User?> GetCurrentUserAsync()
         {
             if (_currentUser != null)
+                return _currentUser;
+
+            await EnsureInitialized();
+            var u = _client.Auth.CurrentUser;
+            if (u != null)
             {
+                _currentUser = new UserModel
+                {
+                    Id = 0,
+                    Email = u.Email ?? string.Empty,
+                    FirstName = string.Empty,
+                    LastName = string.Empty,
+                    StudentId = string.Empty,
+                    AvatarUrl = string.Empty,
+                    IsActive = true
+                };
                 return _currentUser;
             }
-            
-            // 尝试从本地存储恢复登录状态
-            var userIdStr = await SecureStorage.GetAsync("user_id");
-            if (int.TryParse(userIdStr, out int userId))
-            {
-                _currentUser = _users.FirstOrDefault(u => u.Id == userId);
-                return _currentUser;
-            }
-            
+
             return null;
         }
 
         public async Task<bool> IsLoggedInAsync()
         {
-            var user = await GetCurrentUserAsync();
-            return user != null;
+            await EnsureInitialized();
+            return _client.Auth.CurrentUser != null;
         }
 
-        public async Task<bool> UpdateUserAsync(User user)
+        public async Task<bool> UpdateUserAsync(Mobile_App_Develop.Models.User user)
         {
-            await Task.Delay(1000); // 模拟网络延迟
-            
-            var existingUser = _users.FirstOrDefault(u => u.Id == user.Id);
-            if (existingUser != null)
+            await EnsureInitialized();
+            try
             {
-                existingUser.FirstName = user.FirstName;
-                existingUser.LastName = user.LastName;
-                existingUser.StudentId = user.StudentId;
-                existingUser.AvatarUrl = user.AvatarUrl;
-                
-                if (_currentUser?.Id == user.Id)
+                // 仅更新密码外的显示信息，建议在数据库 profiles 表中维护
+                if (_client.Auth.CurrentUser != null)
                 {
-                    _currentUser = existingUser;
+                    _currentUser = user;
                     UserChanged?.Invoke(this, new UserChangedEventArgs(_currentUser));
+                    return true;
                 }
-                
-                return true;
             }
-            
+            catch { }
             return false;
         }
 
         public async Task<bool> ChangePasswordAsync(string currentPassword, string newPassword)
         {
-            await Task.Delay(1000); // 模拟网络延迟
-            
-            if (_currentUser != null && _currentUser.Password == currentPassword)
+            await EnsureInitialized();
+            try
             {
-                var user = _users.FirstOrDefault(u => u.Id == _currentUser.Id);
-                if (user != null)
+                if (_client.Auth.CurrentUser != null)
                 {
-                    user.Password = newPassword;
-                    _currentUser.Password = newPassword;
+                    var attrs = new Supabase.Gotrue.UserAttributes { Password = newPassword };
+                    await _client.Auth.Update(attrs);
                     return true;
                 }
             }
-            
+            catch { }
             return false;
         }
 
         public async Task<bool> ResetPasswordAsync(string email)
         {
-            await Task.Delay(2000); // 模拟网络延迟
-            
-            var user = _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            return user != null; // 在真实应用中，这里会发送重置密码邮件
+            await EnsureInitialized();
+            try
+            {
+                await _client.Auth.ResetPasswordForEmail(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 
     // 事件参数类
     public class UserChangedEventArgs : EventArgs
     {
-        public User? User { get; }
+        public Mobile_App_Develop.Models.User? User { get; }
 
-        public UserChangedEventArgs(User? user)
+        public UserChangedEventArgs(Mobile_App_Develop.Models.User? user)
         {
             User = user;
         }

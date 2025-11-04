@@ -17,7 +17,13 @@ namespace Mobile_App_Develop
         {
             if (_services == null)
             {
-                throw new InvalidOperationException("ServiceHelper is not initialized.");
+                // 尝试通过当前应用的 Handler/MauiContext 获取服务提供器，避免初始化时序问题
+                var fallback = Application.Current?.Handler?.MauiContext?.Services;
+                if (fallback == null)
+                {
+                    throw new InvalidOperationException("ServiceHelper is not initialized.");
+                }
+                _services = fallback;
             }
             return _services.GetRequiredService<T>();
         }

@@ -128,26 +128,6 @@
                         </Label.GestureRecognizers>
                     </Label>
                 </StackLayout>
-                
-                <!-- Demo Credentials Info -->
-                <Frame BackgroundColor="#2A2A2A" 
-                       CornerRadius="8" 
-                       Padding="15" 
-                       Margin="0,20,0,0"
-                       HasShadow="False">
-                    <StackLayout Spacing="5">
-                        <Label Text="Demo Credentials:" 
-                               TextColor="#FFC107" 
-                               FontSize="12" 
-                               FontAttributes="Bold" />
-                        <Label Text="Email: student@uts.edu.my" 
-                               TextColor="#B0B0B0" 
-                               FontSize="11" />
-                        <Label Text="Password: password123" 
-                               TextColor="#B0B0B0" 
-                               FontSize="11" />
-                    </StackLayout>
-                </Frame>
             </StackLayout>
 
         </Grid>

@@ -12,6 +12,12 @@ namespace Mobile_App_Develop
             InitializeComponent();
             _authService = authService;
             
+            // 直接为登录/注册 ShellContent 设定页面实例，避免 DataTemplate 构造期服务解析问题
+            LoginShell.ContentTemplate = null;
+            LoginShell.Content = new LoginPage(_authService);
+            RegisterShell.ContentTemplate = null;
+            RegisterShell.Content = new RegisterPage(_authService);
+            
             // 注册路由
             RegisterRoutes();
             
@@ -44,22 +50,22 @@ namespace Mobile_App_Develop
             
             if (isLoggedIn)
             {
-                // 用户已登录，显示主应用导航
+                // 先导航到主应用，再隐藏登录/注册，避免隐藏当前活动项导致内容丢失
                 MainTabBar.IsVisible = true;
+                CurrentItem = MainTabBar;
+                await Current.GoToAsync("//main/dashboard");
+
                 LoginShell.IsVisible = false;
                 RegisterShell.IsVisible = false;
-                
-                // 导航到Dashboard
-                await Current.GoToAsync("//main/dashboard");
             }
             else
             {
-                // 用户未登录，显示登录页面
+                // 确保当前项是 Login，再导航，避免 Register 处于活动态却不可见
                 MainTabBar.IsVisible = false;
                 LoginShell.IsVisible = true;
                 RegisterShell.IsVisible = true;
-                
-                // 导航到登录页面
+
+                CurrentItem = LoginShell;
                 await Current.GoToAsync("//login");
             }
         }

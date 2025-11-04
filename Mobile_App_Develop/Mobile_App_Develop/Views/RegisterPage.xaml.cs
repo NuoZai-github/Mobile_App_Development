@@ -170,13 +170,13 @@ public partial class RegisterPage : ContentPage
     private async void OnTermsTapped(object sender, EventArgs e)
     {
         await DisplayAlert("Terms of Service", 
-            "This is a demo application. In a real app, this would show the full terms of service.", "OK");
+            "Please read our terms of service carefully before using the UTS Bus Tracker application.", "OK");
     }
 
     private async void OnPrivacyTapped(object sender, EventArgs e)
     {
         await DisplayAlert("Privacy Policy", 
-            "This is a demo application. In a real app, this would show the full privacy policy.", "OK");
+            "Your privacy is important to us. Please review our privacy policy to understand how we handle your data.", "OK");
     }
 
     private async Task SetLoadingState(bool isLoading)
