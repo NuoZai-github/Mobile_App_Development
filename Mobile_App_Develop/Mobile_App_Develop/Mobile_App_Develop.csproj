@@ -41,6 +41,8 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
+		<!-- Prevent Java/managed linking from stripping MAUI classes in Debug -->
+		<AndroidLinkMode>None</AndroidLinkMode>
 		<AndroidLinkTool>r8</AndroidLinkTool>
 	</PropertyGroup>
 
