@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Maps;
 using Mobile_App_Develop.Services;
 using Mobile_App_Develop.Views;
 using CommunityToolkit.Maui;
@@ -15,6 +16,7 @@ namespace Mobile_App_Develop
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
                 .UseLocalNotification()
+                .UseMauiMaps()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
