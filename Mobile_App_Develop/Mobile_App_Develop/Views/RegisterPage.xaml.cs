@@ -113,10 +113,10 @@ public partial class RegisterPage : ContentPage
             return false;
         }
 
-        // 验证学号格式（假设8位数字）
+        // 验证学号格式（允许字母与数字，长度 8-16）
         if (!IsValidStudentId(StudentIdEntry.Text.Trim()))
         {
-            ShowError("Student ID must be 8 digits.");
+            ShowError("Student ID must be 8-16 letters or numbers.");
             return false;
         }
 
@@ -159,12 +159,20 @@ public partial class RegisterPage : ContentPage
 
     private bool IsValidStudentId(string studentId)
     {
-        return studentId.Length == 8 && studentId.All(char.IsDigit);
+        try
+        {
+            var idRegex = new Regex(@"^[A-Za-z0-9]{8,16}$");
+            return idRegex.IsMatch(studentId);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private async void OnLoginTapped(object sender, EventArgs e)
     {
-        await (Shell.Current?.GoToAsync("..") ?? Task.CompletedTask);
+        await (Shell.Current?.GoToAsync("//login") ?? Task.CompletedTask);
     }
 
     private async void OnTermsTapped(object sender, EventArgs e)

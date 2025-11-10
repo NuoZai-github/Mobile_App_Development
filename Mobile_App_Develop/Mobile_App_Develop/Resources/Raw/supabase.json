@@ -1,6 +1,6 @@
 {
   "supabase": {
-    "url": "REPLACE_WITH_SUPABASE_URL",
-    "anonKey": "REPLACE_WITH_SUPABASE_ANON_KEY"
+    "url": "https://ysioglppitqwjtxuqhud.supabase.co",
+    "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzaW9nbHBwaXRxd2p0eHVxaHVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTY0NjksImV4cCI6MjA3Nzc3MjQ2OX0.QhpBFcKS7sGwLHTiQHcAhNJGTDUT4TvEhO0LJyEbseY"
   }
 }

@@ -63,7 +63,18 @@ namespace Mobile_App_Develop.Services
 
             try
             {
-                var session = await _client.Auth.SignUp(user.Email, user.Password);
+                var options = new Supabase.Gotrue.SignUpOptions
+                {
+                    Data = new Dictionary<string, object?>
+                    {
+                        ["first_name"] = user.FirstName,
+                        ["last_name"] = user.LastName,
+                        ["student_id"] = user.StudentId,
+                        ["avatar_url"] = user.AvatarUrl
+                    }
+                };
+
+                var session = await _client.Auth.SignUp(user.Email, user.Password, options);
 
                 // 如果项目开启了邮箱确认，SignUp 后可能没有会话，此处尝试直接登录。
                 if (session == null || session.User == null)
@@ -78,6 +89,24 @@ namespace Mobile_App_Develop.Services
                 if (session != null && session.User != null)
                 {
                     var u = session.User;
+                    try
+                    {
+                        var profiles = _client.From<Mobile_App_Develop.Models.Profile>();
+                        var profile = new Mobile_App_Develop.Models.Profile
+                        {
+                            Id = Guid.Parse(u.Id),
+                            Email = u.Email ?? user.Email,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            StudentId = user.StudentId,
+                            AvatarUrl = user.AvatarUrl,
+                            CreatedAt = DateTime.UtcNow,
+                            IsActive = true
+                        };
+                        await profiles.Upsert(profile);
+                    }
+                    catch { }
+
                     _currentUser = new UserModel
                     {
                         Id = 0,
@@ -152,9 +181,26 @@ namespace Mobile_App_Develop.Services
             await EnsureInitialized();
             try
             {
-                // 仅更新密码外的显示信息，建议在数据库 profiles 表中维护
                 if (_client.Auth.CurrentUser != null)
                 {
+                    try
+                    {
+                        var u = _client.Auth.CurrentUser;
+                        var profiles = _client.From<Mobile_App_Develop.Models.Profile>();
+                        var profile = new Mobile_App_Develop.Models.Profile
+                        {
+                            Id = Guid.Parse(u!.Id),
+                            Email = u.Email ?? user.Email,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            StudentId = user.StudentId,
+                            AvatarUrl = user.AvatarUrl,
+                            IsActive = user.IsActive
+                        };
+                        await profiles.Upsert(profile);
+                    }
+                    catch { }
+
                     _currentUser = user;
                     UserChanged?.Invoke(this, new UserChangedEventArgs(_currentUser));
                     return true;

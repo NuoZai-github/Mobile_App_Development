@@ -51,10 +51,18 @@ namespace Mobile_App_Develop.Services
             var url = Environment.GetEnvironmentVariable("SUPABASE_URL");
             if (string.IsNullOrEmpty(url))
             {
+                // Support NEXT_PUBLIC_* style variables commonly used in web apps
+                url = Environment.GetEnvironmentVariable("NEXT_PUBLIC_SUPABASE_URL");
+            }
+            if (string.IsNullOrEmpty(url))
+            {
                 LoadConfigIfNeeded();
                 if (_config!.TryGetValue("SUPABASE_URL", out var v) && !string.IsNullOrWhiteSpace(v))
                     return v;
-                throw new InvalidOperationException("SUPABASE_URL not configured. Set environment variable or provide Resources/Raw/supabase.json.");
+                // Fallback in case config file provides NEXT_PUBLIC_* keys
+                if (_config!.TryGetValue("NEXT_PUBLIC_SUPABASE_URL", out var v2) && !string.IsNullOrWhiteSpace(v2))
+                    return v2;
+                throw new InvalidOperationException("SUPABASE_URL not configured. Set env SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL, or provide Resources/Raw/supabase.json.");
             }
             return url;
         }
@@ -64,10 +72,18 @@ namespace Mobile_App_Develop.Services
             var anonKey = Environment.GetEnvironmentVariable("SUPABASE_ANON_KEY");
             if (string.IsNullOrEmpty(anonKey))
             {
+                // Support NEXT_PUBLIC_* style variables commonly used in web apps
+                anonKey = Environment.GetEnvironmentVariable("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+            }
+            if (string.IsNullOrEmpty(anonKey))
+            {
                 LoadConfigIfNeeded();
                 if (_config!.TryGetValue("SUPABASE_ANON_KEY", out var v) && !string.IsNullOrWhiteSpace(v))
                     return v;
-                throw new InvalidOperationException("SUPABASE_ANON_KEY not configured. Set environment variable or provide Resources/Raw/supabase.json.");
+                // Fallback in case config file provides NEXT_PUBLIC_* keys
+                if (_config!.TryGetValue("NEXT_PUBLIC_SUPABASE_ANON_KEY", out var v2) && !string.IsNullOrWhiteSpace(v2))
+                    return v2;
+                throw new InvalidOperationException("SUPABASE_ANON_KEY not configured. Set env SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY, or provide Resources/Raw/supabase.json.");
             }
             return anonKey;
         }
