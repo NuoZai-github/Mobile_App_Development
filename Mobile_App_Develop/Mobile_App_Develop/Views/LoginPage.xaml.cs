@@ -150,5 +150,15 @@ public partial class LoginPage : ContentPage
         EmailEntry.Text = string.Empty;
         PasswordEntry.Text = string.Empty;
         HideError();
+
+        await this.FadeTo(0, 0);
+        await this.FadeTo(1, 350);
+        await LoginButton.ScaleTo(1.02, 200);
+        await LoginButton.ScaleTo(1, 120);
+    }
+
+    private void OnTogglePasswordVisibility(object sender, EventArgs e)
+    {
+        PasswordEntry.IsPassword = !PasswordEntry.IsPassword;
     }
 }

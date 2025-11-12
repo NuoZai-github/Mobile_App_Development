@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage x:Class="Mobile_App_Develop.Views.SplashPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             BackgroundColor="#0095FF">
+  <Grid x:Name="Root" RowDefinitions="Auto,*,Auto">
+    <Grid Padding="20,0" HeightRequest="44" />
+    <Grid>
+      <Image Source="bg_first.png" Aspect="AspectFill" />
+      <Image x:Name="Logo" Source="logo_brand.png" Aspect="AspectFit" WidthRequest="75" HeightRequest="60" HorizontalOptions="Center" VerticalOptions="Center" Opacity="0" />
+    </Grid>
+    <Grid HeightRequest="30" HorizontalOptions="Center" VerticalOptions="End">
+      <BoxView x:Name="Handle" Color="White" WidthRequest="120" HeightRequest="4" CornerRadius="2" Opacity="0" TranslationY="12" />
+    </Grid>
+  </Grid>
+</ContentPage>

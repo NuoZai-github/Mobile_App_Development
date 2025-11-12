@@ -8,6 +8,12 @@
     Title="UTS Bus Tracker"
     Shell.FlyoutBehavior="Disabled">
 
+    <!-- 启动页路由 -->
+    <ShellContent
+        Title="Splash"
+        ContentTemplate="{DataTemplate views:SplashPage}"
+        Route="splash" />
+
     <!-- 认证页面路由 -->
     <ShellContent
         x:Name="LoginShell"
