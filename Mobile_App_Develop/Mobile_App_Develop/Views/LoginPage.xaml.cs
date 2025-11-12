@@ -99,7 +99,7 @@ public partial class LoginPage : ContentPage
         }
     }
 
-    private async Task SetLoadingState(bool isLoading)
+    private Task SetLoadingState(bool isLoading)
     {
         LoadingIndicator.IsVisible = isLoading;
         LoadingIndicator.IsRunning = isLoading;
@@ -115,6 +115,7 @@ public partial class LoginPage : ContentPage
         {
             LoginButton.Text = "Sign In";
         }
+        return Task.CompletedTask;
     }
 
     private async Task ShowError(string message)
